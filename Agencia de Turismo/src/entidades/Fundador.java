@@ -66,7 +66,9 @@ public class Fundador {
 	 */
 	public void setDataNascimento(String dataNascimento) {
 		DateTimeFormatter formatter=DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		this.dataNascimento = LocalDate.parse(dataNascimento, formatter);
+		if (dataNascimento!=null) {
+			this.dataNascimento = LocalDate.parse(dataNascimento, formatter);
+		}
 	}
 	/**
 	 * @return the dataFalecimento
@@ -92,7 +94,9 @@ public class Fundador {
 	 */
 	public void setDataFalecimento(String dataFalecimento) {
 		DateTimeFormatter formatter=DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		this.dataFalecimento = LocalDate.parse(dataFalecimento, formatter);
+		if (dataFalecimento!=null) {
+			this.dataFalecimento = LocalDate.parse(dataFalecimento, formatter);
+		}
 	}
 	/**
 	 * @return the nacionalidade
@@ -130,10 +134,14 @@ public class Fundador {
 				.append('\'')
 				.append(',');
 			if (!isNull(dataNascimento)) {
-				result.append(dataNascimento)
+				result.append('\'')
+					.append(dataNascimento.toString())
+					.append('\'')
 					.append(',');
 				if (!isNull(dataFalecimento)) {
-					result.append(dataFalecimento)
+					result.append('\'')
+						.append(dataFalecimento.toString())
+						.append('\'')
 						.append(',');
 					if (!isNull(nacionalidade)) {
 						result.append('\'')

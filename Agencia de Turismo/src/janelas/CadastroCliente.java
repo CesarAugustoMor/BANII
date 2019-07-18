@@ -11,6 +11,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,22 +20,26 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import entidades.Cliente;
 import interacaoBanco.ExecutaQuery;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CadastroCliente {
 
-	private JFrame frmCadastroCliente;
+	private JDialog frmCadastroCliente;
 	private JTextField nomeCliente;
 	private JTextField cpfCliente;
 	private JTextField telefoneCliente;
 	private JTextField emailCliente;
 	private Connection conection;
+	private JButton btnCadastrar = new JButton("Cadastrar");
+	JButton btnCancelar = new JButton("Cancelar");
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
-	public static void Abrir(Connection conection) {
+	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroCliente window = new CadastroCliente(conection);
+					CadastroCliente window = new CadastroCliente(conection, frPrincipal);
 					window.frmCadastroCliente.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -47,16 +52,16 @@ public class CadastroCliente {
 	 * Create the application.
 	 * @param conection 
 	 */
-	public CadastroCliente(Connection conection) {
+	public CadastroCliente(Connection conection, JFrame frPrincipal) {
 		this.conection=conection;
-		initialize();
+		initialize(frPrincipal);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		frmCadastroCliente = new JFrame();
+	private void initialize(JFrame frPrincipal) {
+		frmCadastroCliente = new JDialog(frPrincipal);
 		frmCadastroCliente.setResizable(false);
 		frmCadastroCliente.setTitle("Cadastro Cliente");
 		frmCadastroCliente.setLocationByPlatform(true);
@@ -68,6 +73,17 @@ public class CadastroCliente {
 		lblNome.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		nomeCliente = new JTextField();
+		nomeCliente.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		nomeCliente.setToolTipText("Nome (Obrigat\u00F3rio)");
 		nomeCliente.setColumns(10);
 		
@@ -75,6 +91,17 @@ public class CadastroCliente {
 		lblCpfapnasNumeros.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		cpfCliente = new JTextField();
+		cpfCliente.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		cpfCliente.setToolTipText("CPF (Apenas n\u00FAmeros e \u00E9 Obrigat\u00F3rio)");
 		cpfCliente.setColumns(10);
 		
@@ -82,6 +109,17 @@ public class CadastroCliente {
 		lblTelefoneapenasNmeros.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		telefoneCliente = new JTextField();
+		telefoneCliente.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		telefoneCliente.setToolTipText("Telefone (Opcional)");
 		telefoneCliente.setColumns(10);
 		
@@ -89,10 +127,20 @@ public class CadastroCliente {
 		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		emailCliente = new JTextField();
+		emailCliente.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		emailCliente.setToolTipText("E-mail  (Opcional)");
 		emailCliente.setColumns(10);
 		
-		JButton btnCadastrar = new JButton("Cadastrar");
 		buttonGroup.add(btnCadastrar);
 		btnCadastrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -110,7 +158,6 @@ public class CadastroCliente {
 			}
 		});
 		
-		JButton btnCancelar = new JButton("Cancelar");
 		buttonGroup.add(btnCancelar);
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

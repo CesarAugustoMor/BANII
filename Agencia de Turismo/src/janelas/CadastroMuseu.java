@@ -12,28 +12,34 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CadastroMuseu {
 
-	private JFrame frmCadastroDeMuseu;
+	private JDialog frmCadastroDeMuseu;
 	private JTextField enderecoMuseu;
 	private JTextField nomeMuseu;
 	private JTextField dataFundacao;
 	private JTextField numeroSalasMuseu;
 	private JTextField numeroFundadores;
 	private Connection conection;
+	private JButton btnCadastrar = new JButton("Cadastrar");
+	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
 	 * Launch the application.
 	 */
-	public static void Abrir(Connection conection) {
+	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroMuseu window = new CadastroMuseu(conection);
+					CadastroMuseu window = new CadastroMuseu(conection, frPrincipal);
 					window.frmCadastroDeMuseu.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -45,16 +51,16 @@ public class CadastroMuseu {
 	/**
 	 * Create the application.
 	 */
-	public CadastroMuseu(Connection conection) {
+	public CadastroMuseu(Connection conection, JFrame frPrincipal) {
 		this.conection=conection;
-		initialize();
+		initialize(frPrincipal);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		frmCadastroDeMuseu = new JFrame();
+	private void initialize(JFrame frPrincipal) {
+		frmCadastroDeMuseu = new JDialog(frPrincipal);
 		frmCadastroDeMuseu.setResizable(false);
 		frmCadastroDeMuseu.setTitle("Cadastro de Museu");
 		frmCadastroDeMuseu.setType(Type.UTILITY);
@@ -62,17 +68,50 @@ public class CadastroMuseu {
 		frmCadastroDeMuseu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JEditorPane descricaoMuseu = new JEditorPane();
+		descricaoMuseu.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		
 		JLabel labelDescricao = new JLabel("Descri\u00E7\u00E3o: *");
 		labelDescricao.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		enderecoMuseu = new JTextField();
+		enderecoMuseu.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		enderecoMuseu.setColumns(10);
 		
 		JLabel labelEndereco = new JLabel("Endere\u00E7o: *");
 		labelEndereco.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		nomeMuseu = new JTextField();
+		nomeMuseu.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		nomeMuseu.setColumns(10);
 		
 		JLabel labelNome = new JLabel("Nome: *");
@@ -82,6 +121,17 @@ public class CadastroMuseu {
 		lblDataDeFundao.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		dataFundacao = new JTextField();
+		dataFundacao.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		lblDataDeFundao.setLabelFor(dataFundacao);
 		dataFundacao.setColumns(10);
 		
@@ -89,6 +139,17 @@ public class CadastroMuseu {
 		lblNmeroDeSalas.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		numeroSalasMuseu = new JTextField();
+		numeroSalasMuseu.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		lblNmeroDeSalas.setLabelFor(numeroSalasMuseu);
 		numeroSalasMuseu.setColumns(10);
 		
@@ -96,18 +157,27 @@ public class CadastroMuseu {
 		lblNumeroDeFundadores.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		numeroFundadores = new JTextField();
+		numeroFundadores.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		numeroFundadores.setColumns(10);
 		
-		JButton cadastrar = new JButton("Cadastrar");
-		cadastrar.setToolTipText("Cadastra o quarto se n\u00E3o eceder o numero de quartos j\u00E1 cadastrados no hotel em espec\u00EDfico.");
+		btnCadastrar.setToolTipText("Cadastra o quarto se n\u00E3o eceder o numero de quartos j\u00E1 cadastrados no hotel em espec\u00EDfico.");
 		
-		JButton cancelar = new JButton("Cancelar");
-		cancelar.addActionListener(new ActionListener() {
+		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frmCadastroDeMuseu.dispose();
 			}
 		});
-		cancelar.setToolTipText("Cancela o cadastro de um quarto.");
+		btnCancelar.setToolTipText("Cancela o cadastro de um quarto.");
 		GroupLayout groupLayout = new GroupLayout(frmCadastroDeMuseu.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -129,9 +199,9 @@ public class CadastroMuseu {
 							.addComponent(labelDescricao, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
 							.addComponent(descricaoMuseu, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(cadastrar, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)
+							.addComponent(btnCadastrar, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED, 225, Short.MAX_VALUE)
-							.addComponent(cancelar, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -163,8 +233,8 @@ public class CadastroMuseu {
 					.addComponent(descricaoMuseu, GroupLayout.PREFERRED_SIZE, 281, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(cadastrar)
-						.addComponent(cancelar))
+						.addComponent(btnCadastrar)
+						.addComponent(btnCancelar))
 					.addContainerGap())
 		);
 		frmCadastroDeMuseu.getContentPane().setLayout(groupLayout);

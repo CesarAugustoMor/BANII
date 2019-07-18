@@ -1,28 +1,26 @@
 package janelas;
 
 import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.awt.event.ActionEvent;
 import java.util.Locale;
-import java.awt.Frame;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.Font;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import interacaoBanco.ConectaBanco;
-
-import javax.swing.JButton;
 
 public class JanelaPrincipal {
 
@@ -78,7 +76,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroCidade.Abrir(conection);
+				CadastroCidade.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		mnCadastros.add(CadastroCicadades);
@@ -89,7 +87,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				} else
-					CadastroCliente.Abrir(conection);
+					CadastroCliente.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		mnCadastros.add(CadastroClientes);
@@ -103,7 +101,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroHotel.Abrir(conection);
+				CadastroHotel.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		CadastroHoteis.add(CadastroNovoHotel);
@@ -114,7 +112,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroQuartos.Abrir(conection);
+				CadastroQuartos.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		CadastroHoteis.add(CadastroQuartosHotel);
@@ -125,7 +123,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroRestaurante.Abrir(conection);
+				CadastroRestaurante.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		mnCadastros.add(CadastroRestaurantes);
@@ -143,7 +141,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroCasaShow.Abrir(conection);
+				CadastroCasaShow.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		CadastroPontosTuristicos.add(CadastroCasasDeShow);
@@ -154,7 +152,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroIgreja.Abrir(conection);
+				CadastroIgreja.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		CadastroPontosTuristicos.add(CadastroIgrejas);
@@ -168,21 +166,21 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroMuseu.Abrir(conection);
+				CadastroMuseu.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		CadastroMuseus.add(CadastroNovoMuseu);
 		
-		JMenuItem CadastroFundadores = new JMenuItem("Fundadores");
-		CadastroFundadores.addActionListener(new ActionListener() {
+		JMenuItem CadastroFundadore = new JMenuItem("Fundadore");
+		CadastroFundadore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroFundador.Abrir(conection);
+				CadastroFundador.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
-		CadastroMuseus.add(CadastroFundadores);
+		CadastroMuseus.add(CadastroFundadore);
 		
 		JMenuItem mntmOutros = new JMenuItem("Outros");
 		mntmOutros.addActionListener(new ActionListener() {
@@ -190,7 +188,7 @@ public class JanelaPrincipal {
 				if (conectionIsNull()) {
 					mensagemConectarBanco();
 				}else
-				CadastroPontoTuristico.Abrir(conection);
+				CadastroPontoTuristico.Abrir(conection, frmAgenciaDeTurismo);
 			}
 		});
 		CadastroPontosTuristicos.add(mntmOutros);
@@ -286,9 +284,17 @@ public class JanelaPrincipal {
 		lblSenhaDoUsuario.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		senhaServidor = new JTextField();
+		senhaServidor.setText("1234");
 		lblSenhaDoUsuario.setLabelFor(senhaServidor);
 		
-		JButton btnConectar = new JButton("Conectar");
+		/**/
+		try {
+			conection=ConectaBanco.getConection(getEnderecoServidor(), getPotaServidor(), getSenhaServidor());
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		/**/
+		/*JButton btnConectar = new JButton("Conectar");
 		btnConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -299,7 +305,7 @@ public class JanelaPrincipal {
 					e.printStackTrace();
 				}
 			}
-		});
+		});*/
 		GroupLayout groupLayout = new GroupLayout(frmAgenciaDeTurismo.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -314,8 +320,8 @@ public class JanelaPrincipal {
 								.addComponent(senhaServidor, Alignment.LEADING)
 								.addComponent(portaServidor, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)))
 						.addComponent(lblSenhaDoUsuario)
-						.addComponent(btnConectar))
-					.addContainerGap(120, Short.MAX_VALUE))
+						//.addComponent(btnConectar))
+					).addContainerGap(120, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -333,7 +339,7 @@ public class JanelaPrincipal {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(senhaServidor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(btnConectar)
+					//.addComponent(btnConectar)
 					.addContainerGap(287, Short.MAX_VALUE))
 		);
 		frmAgenciaDeTurismo.getContentPane().setLayout(groupLayout);

@@ -133,7 +133,7 @@ public class Restaurante {
 		StringBuilder result = new StringBuilder();
         result.append("SELECT inserir_restaurante(");
 		if (!isNull(nome)) {
-			System.out.println(nome+"sdfg");
+			System.out.println(nome);
 			result.append('\'')
 				.append(nome)
 				.append('\'')

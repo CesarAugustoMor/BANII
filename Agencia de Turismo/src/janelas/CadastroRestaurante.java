@@ -11,6 +11,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,23 +21,28 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import entidades.Restaurante;
 import interacaoBanco.ExecutaQuery;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CadastroRestaurante {
 
-	private JFrame frmCadastroDeRestaurante;
+	private JDialog frmCadastroDeRestaurante;
 	private JTextField nomeRestaurante;
 	private JTextField enderecoRestaurante;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private Connection conection;
+	private JButton btnCadastrar = new JButton("Cadastrar");
+	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
 	 * Launch the application.
+	 * @return 0 ao terminar a execução
 	 */
-	public static void Abrir(Connection conection) {
+	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroRestaurante window = new CadastroRestaurante(conection);
+					CadastroRestaurante window = new CadastroRestaurante(conection, frPrincipal);
 					window.frmCadastroDeRestaurante.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -48,16 +54,17 @@ public class CadastroRestaurante {
 	/**
 	 * Create the application.
 	 */
-	public CadastroRestaurante(Connection conection) {
+	public CadastroRestaurante(Connection conection, JFrame frPrincipal) {
 		this.conection=conection;
-		initialize();
+		initialize(frPrincipal);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		frmCadastroDeRestaurante = new JFrame();
+	private void initialize(JFrame frPrincipal) {
+		frmCadastroDeRestaurante = new JDialog(frPrincipal);
+		frmCadastroDeRestaurante.setModal(true);
 		frmCadastroDeRestaurante.setTitle("Cadastro de Restaurante.");
 		frmCadastroDeRestaurante.setResizable(false);
 		frmCadastroDeRestaurante.setType(Type.UTILITY);
@@ -68,6 +75,17 @@ public class CadastroRestaurante {
 		lblNome.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		nomeRestaurante = new JTextField();
+		nomeRestaurante.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		lblNome.setLabelFor(nomeRestaurante);
 		nomeRestaurante.setColumns(10);
 		
@@ -75,40 +93,105 @@ public class CadastroRestaurante {
 		lblEndereo.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		enderecoRestaurante = new JTextField();
+		enderecoRestaurante.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		enderecoRestaurante.setColumns(10);
-		
-		JRadioButton cincoEstrelas = new JRadioButton("Cinco Estrela");
-		buttonGroup.add(cincoEstrelas);
-		cincoEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
-		cincoEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		JRadioButton quatroEstrelas = new JRadioButton("Quatro Estrela");
-		buttonGroup.add(quatroEstrelas);
-		quatroEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
-		quatroEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		JRadioButton tresEstrelas = new JRadioButton("Tr\u00EAs Estrelas");
-		buttonGroup.add(tresEstrelas);
-		tresEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
-		tresEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		JRadioButton duasEstrelas = new JRadioButton("Duas Estrelas");
-		buttonGroup.add(duasEstrelas);
-		duasEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
-		duasEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
+
 		JRadioButton umEstrela = new JRadioButton("Uma Estrela");
+		umEstrela.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		buttonGroup.add(umEstrela);
 		umEstrela.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
 		umEstrela.setSelected(true);
 		umEstrela.setFont(new Font("Tahoma", Font.PLAIN, 13));
+
+		JRadioButton duasEstrelas = new JRadioButton("Duas Estrelas");
+		duasEstrelas.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
+		buttonGroup.add(duasEstrelas);
+		duasEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
+		duasEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
+
+		JRadioButton tresEstrelas = new JRadioButton("Tr\u00EAs Estrelas");
+		tresEstrelas.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
+		buttonGroup.add(tresEstrelas);
+		tresEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
+		tresEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
+
+		JRadioButton quatroEstrelas = new JRadioButton("Quatro Estrela");
+		quatroEstrelas.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
+		buttonGroup.add(quatroEstrelas);
+		quatroEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
+		quatroEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		
+		JRadioButton cincoEstrelas = new JRadioButton("Cinco Estrela");
+		cincoEstrelas.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				System.out.println(arg0.getKeyChar());
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
+		buttonGroup.add(cincoEstrelas);
+		cincoEstrelas.setToolTipText("Qualidade do Hotel representada em uma classifica\u00E7\u00E3o de uma a cindo estrelas.");
+		cincoEstrelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		JLabel labelTipoQuarto = new JLabel("Tipo do quarto: *");
 		labelTipoQuarto.setLabelFor(umEstrela);
 		labelTipoQuarto.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		JButton Cadastrar = new JButton("Cadastrar");
-		Cadastrar.addActionListener(new ActionListener() {
+		btnCadastrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Restaurante rest = new Restaurante();
 				rest.setEndereco(getEndereco());
@@ -134,15 +217,14 @@ public class CadastroRestaurante {
 				}
 			}
 		});
-		Cadastrar.setToolTipText("Cadastra o quarto se n\u00E3o eceder o numero de quartos j\u00E1 cadastrados no hotel em espec\u00EDfico.");
+		btnCadastrar.setToolTipText("Cadastra o quarto se n\u00E3o eceder o numero de quartos j\u00E1 cadastrados no hotel em espec\u00EDfico.");
 		
-		JButton cancelar = new JButton("Cancelar");
-		cancelar.addActionListener(new ActionListener() {
+		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frmCadastroDeRestaurante.dispose();
 			}
 		});
-		cancelar.setToolTipText("Cancela o cadastro de um quarto.");
+		btnCancelar.setToolTipText("Cancela o cadastro de um quarto.");
 		GroupLayout groupLayout = new GroupLayout(frmCadastroDeRestaurante.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -159,12 +241,12 @@ public class CadastroRestaurante {
 						.addComponent(enderecoRestaurante, 223, 223, 223)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
-								.addComponent(Cadastrar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnCadastrar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(cincoEstrelas, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
 									.addGap(3)))
 							.addPreferredGap(ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-							.addComponent(cancelar, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE))
+							.addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE))
 						.addComponent(labelTipoQuarto, GroupLayout.PREFERRED_SIZE, 222, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
@@ -189,8 +271,8 @@ public class CadastroRestaurante {
 					.addComponent(cincoEstrelas, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(Cadastrar)
-						.addComponent(cancelar))
+						.addComponent(btnCadastrar)
+						.addComponent(btnCancelar))
 					.addContainerGap())
 		);
 		frmCadastroDeRestaurante.getContentPane().setLayout(groupLayout);

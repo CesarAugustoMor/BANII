@@ -20,24 +20,6 @@ public class Igreja {
 	private String estiloConstrucao;
 
 	/**
-	 * @param cod
-	 * @param nome
-	 * @param descricao
-	 * @param endereco
-	 * @param dataConstrucao
-	 * @param estiloConstrucao
-	 */
-	public Igreja(Integer cod, String nome, String descricao, String endereco, LocalDate dataConstrucao, String estiloConstrucao) {
-		super();
-		this.cod = cod;
-		this.nome = nome;
-		this.descricao = descricao;
-		this.endereco = endereco;
-		this.dataConstrucao = dataConstrucao;
-		this.estiloConstrucao = estiloConstrucao;
-	}
-
-	/**
 	 * @return the cod
 	 */
 	public Integer getCod() {
@@ -160,14 +142,16 @@ public class Igreja {
 	/**
 	 * @return {@link StringBuilder} com a string já formatada para cadastrar um ponto no banco de dados. DEVE se utilizar primeiro o método {@link PontoTuristico}, em seguida realizar uma busca no banco para se obter o código do ponto
 	 */
-	public StringBuilder igrjaParaCadastro() {
+	public StringBuilder igrejaParaCadastro() {
 		StringBuilder result = new StringBuilder();
         result.append("SELECT inserir_Igreja(");
 		if (!isNull(cod)) {
 			result.append(cod)
 				.append(',');
 			if (!isNull(dataConstrucao)) {
-				result.append(dataConstrucao)
+				result.append('\'')
+					.append(dataConstrucao)
+					.append('\'')
 					.append(',');
 				if (!isNull(estiloConstrucao)) {
 					result.append('\'')
@@ -189,5 +173,15 @@ public class Igreja {
 	 */
 	private boolean isNull(Object valor) {
 		return valor==null;
+	}
+
+	/**
+	 * @param dataConstrucao
+	 */
+	public void setDataConstrucao(String dataConstrucao) {
+		DateTimeFormatter formatter=DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		if (dataConstrucao!=null) {
+			this.dataConstrucao = LocalDate.parse(dataConstrucao, formatter);
+		}
 	}
 }

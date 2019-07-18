@@ -16,25 +16,6 @@ public class Hotel {
 	private Integer numeroQuartos;
 	private Integer rest;
 
-	public Hotel(Integer codhot, String nome, String endereco, Integer categoria, Integer numeroquartos, Integer rest) {
-
-		this.cod = codhot;
-		this.nome = nome;
-		this.endereco = endereco;
-		this.categoria = categoria;
-		this.numeroQuartos = numeroquartos;
-		this.rest = rest;
-	}
-
-	public Hotel(Integer codhot, String nome, String endereco, Integer categoria, Integer numeroquartos) {
-
-		this.cod = codhot;
-		this.nome = nome;
-		this.endereco = endereco;
-		this.categoria = categoria;
-		this.numeroQuartos = numeroquartos;
-	}
-
 	/**
 	 * @return the codhot
 	 */

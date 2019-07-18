@@ -12,22 +12,7 @@ public class Cidade {
 	private Integer cod;
 	private String nome;
 	private String estado;
-	private Integer populacao;
-
-	public Cidade(Integer codcid, String nome, String estado, Integer populacao) {
-
-		this.cod = codcid;
-		this.nome = nome;
-		this.estado = estado;
-		this.populacao = populacao;
-	}
-
-	public Cidade(String nome, String estado, Integer populacao) {
-
-		this.nome = nome;
-		this.estado = estado;
-		this.populacao = populacao;
-	}
+	private Long populacao;
 
 	/**
 	 * @return the cod
@@ -74,14 +59,14 @@ public class Cidade {
 	/**
 	 * @return the populacao
 	 */
-	public Integer getPopulacao() {
+	public Long getPopulacao() {
 		return populacao;
 	}
 
 	/**
 	 * @param populacao the populacao to set
 	 */
-	public void setPopulacao(Integer populacao) {
+	public void setPopulacao(Long populacao) {
 		this.populacao = populacao;
 	}
 	/**
@@ -104,6 +89,7 @@ public class Cidade {
 					result.append('\'')
 						.append(populacao)
 						.append("\');");
+					return result;
 				} else {
 					return null;
 				}

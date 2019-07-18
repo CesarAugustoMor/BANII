@@ -1,36 +1,46 @@
 package janelas;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
+import java.awt.Font;
 import java.awt.Window.Type;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.Connection;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.awt.event.ActionEvent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Font;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import entidades.Cidade;
+import interacaoBanco.ExecutaQuery;
 
 public class CadastroCidade {
 
-	private JFrame frmCadatroDeCidade;
+	private JDialog frmCadatroDeCidade;
 	private JTextField nomeCidade;
 	private JTextField estadoCidade;
 	private JTextField populacaoCidade;
 	private Connection conection;
+	private JButton btnCadastrar = new JButton("Cadastrar");
+	
+	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
 	 * Launch the application.
 	 */
-	public static void Abrir(Connection conection) {
+	public static void Abrir(Connection conection,JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroCidade window = new CadastroCidade(conection);
+					CadastroCidade window = new CadastroCidade(conection,frPrincipal);
 					window.frmCadatroDeCidade.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -42,21 +52,41 @@ public class CadastroCidade {
 	/**
 	 * Create the application.
 	 */
-	public CadastroCidade(Connection conection) {
+	public CadastroCidade(Connection conection, JFrame frPrincipal) {
 		this.conection=conection;
-		initialize();
+		initialize(frPrincipal);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		frmCadatroDeCidade = new JFrame();
+	private void initialize(JFrame frPrincipal) {
+		frmCadatroDeCidade = new JDialog(frPrincipal);
+		frmCadatroDeCidade.getContentPane().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
+		frmCadatroDeCidade.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		frmCadatroDeCidade.setLocationByPlatform(true);
 		frmCadatroDeCidade.setResizable(false);
 		frmCadatroDeCidade.setType(Type.UTILITY);
 		frmCadatroDeCidade.setTitle("Cadatro de Cidade");
-		frmCadatroDeCidade.setBounds(100, 100, 230, 250);
+		frmCadatroDeCidade.setBounds(100, 100, 230, 261);
 		frmCadatroDeCidade.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JLabel lblNome = new JLabel("Nome: *");
@@ -64,6 +94,16 @@ public class CadastroCidade {
 		lblNome.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		nomeCidade = new JTextField();
+		nomeCidade.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		nomeCidade.setToolTipText("Nome da ciadade.");
 		nomeCidade.setColumns(10);
 		
@@ -72,6 +112,16 @@ public class CadastroCidade {
 		lblEstado.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		estadoCidade = new JTextField();
+		estadoCidade.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		estadoCidade.setToolTipText("Estado em que a cidade pertence.");
 		estadoCidade.setColumns(10);
 		
@@ -80,14 +130,56 @@ public class CadastroCidade {
 		lblPopulcao.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		populacaoCidade = new JTextField();
+		populacaoCidade.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		populacaoCidade.setToolTipText("N\u00FAmero de habitantes da cidade.");
 		populacaoCidade.setColumns(10);
 		
 		JLabel lblCamposObrigatorios = new JLabel("* Campos Obrigatorios.");
-		
-		JButton btnCadastrar = new JButton("Cadastrar");
-		
-		JButton btnCancelar = new JButton("Cancelar");
+		lblCamposObrigatorios.setLabelFor(frmCadatroDeCidade);
+		btnCadastrar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
+
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Cidade cidade= new Cidade();
+				cidade.setNome(getNomeCidade());
+				cidade.setEstado(getEstado());
+				cidade.setPopulacao(getPopulacao());
+				if (!ExecutaQuery.cadastra(cidade.cidadeParaCadastro(), conection)) {
+					mensagemErroCadastrar();
+				} else {
+					mensegemSucessoCadastro();
+					frmCadatroDeCidade.dispose();
+				}
+			}
+		});
+		btnCancelar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCancelar.doClick();
+				}
+			}
+		});
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frmCadatroDeCidade.dispose();
@@ -136,6 +228,45 @@ public class CadastroCidade {
 					.addContainerGap())
 		);
 		frmCadatroDeCidade.getContentPane().setLayout(groupLayout);
+	}
+	/**
+	 * @return the nomeCidade
+	 */
+	private String getNomeCidade() {
+		if (nomeCidade.getText().equals("")) {
+			return null;
+		}
+		return nomeCidade.getText().trim();
+	}
+
+	/**
+	 * @return the populacaoCiadade
+	 */
+	private Long getPopulacao() {
+		if (populacaoCidade.getText().equals("")) {
+			return null;
+		}
+		return Long.parseLong(populacaoCidade.getText().trim());
+	}
+
+	/**
+	 * @return the estadoCidade
+	 */
+	private String getEstado() {
+		if (estadoCidade.getText().equals("")) {
+			return null;
+		}
+		return estadoCidade.getText().trim();
+	}
+
+	/**
+	 * Mostra mensagem solicitando que seja revisado os dados inseridos
+	 */
+	private void mensagemErroCadastrar() {
+		JOptionPane.showMessageDialog(null, "Erro ao inserir o Cliente. Revise os dados inseridos.", "Alerta", 0);
+	}
+	private void mensegemSucessoCadastro() {
+		JOptionPane.showMessageDialog(null, "Sucesso ao cadastrar a Casa de Show.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 }
