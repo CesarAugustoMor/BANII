@@ -1,23 +1,26 @@
 package janelas;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import java.awt.Window.Type;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
+import java.awt.Window.Type;
 import java.awt.event.ActionEvent;
-import javax.swing.JEditorPane;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.Connection;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import entidades.PontoTuristico;
+import interacaoBanco.ExecutaQuery;
 
 public class CadastroPontoTuristico {
 
@@ -25,11 +28,12 @@ public class CadastroPontoTuristico {
 	private JTextField enderecoPonto;
 	private JTextField nomePontoT;
 	private Connection conection;
+	private JEditorPane descricaoPontoTuristico;
 	private JButton btnCadastrar = new JButton("Cadastrar");
 	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
-	 * Launch the application.
+	 * Launch the window.
 	 */
 	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
@@ -57,6 +61,16 @@ public class CadastroPontoTuristico {
 	 */
 	private void initialize(JFrame frPrincipal) {
 		frmCadastroPontoTurstico = new JDialog(frPrincipal);
+		frmCadastroPontoTurstico.getContentPane().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		frmCadastroPontoTurstico.setResizable(false);
 		frmCadastroPontoTurstico.setType(Type.UTILITY);
 		frmCadastroPontoTurstico.setTitle("Cadastro Ponto Tur\u00EDstico.");
@@ -67,7 +81,6 @@ public class CadastroPontoTuristico {
 		enderecoPonto.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -85,7 +98,6 @@ public class CadastroPontoTuristico {
 		nomePontoT.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -98,8 +110,42 @@ public class CadastroPontoTuristico {
 		JLabel labelNomePonto = new JLabel("Nome: *");
 		labelNomePonto.setLabelFor(nomePontoT);
 		labelNomePonto.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PontoTuristico ponto = new PontoTuristico();
+				ponto.setNome(getNomePonto());
+				ponto.setDescricao(getDescricao());
+				ponto.setEndereco(getEndereco());
+				if (!ExecutaQuery.cadastra(ponto.pontoParaCadastro(), conection)) {
+					Mesnsagens.mensagemErroCadastrar();
+				} else {
+					Mesnsagens.mensegemSucessoCadastro();
+					frmCadastroPontoTurstico.dispose();
+				}
+			}
+		});
+		btnCadastrar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		
 		btnCadastrar.setToolTipText("Cadastra o quarto se n\u00E3o eceder o numero de quartos j\u00E1 cadastrados no hotel em espec\u00EDfico.");
+		btnCancelar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -111,11 +157,10 @@ public class CadastroPontoTuristico {
 		JLabel lblDescrio = new JLabel("Descri\u00E7\u00E3o: *");
 		lblDescrio.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		JEditorPane descricaoPontoTuristico = new JEditorPane();
+		descricaoPontoTuristico = new JEditorPane();
 		descricaoPontoTuristico.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -165,5 +210,35 @@ public class CadastroPontoTuristico {
 					.addContainerGap())
 		);
 		frmCadastroPontoTurstico.getContentPane().setLayout(groupLayout);
+	}
+
+	/**
+	 * @return the nomePonto
+	 */
+	private String getNomePonto() {
+		if (nomePontoT.getText().equals("")) {
+			return null;
+		}
+		return nomePontoT.getText().trim();
+	}
+
+	/**
+	 * @return the enderecoPonto
+	 */
+	private String getEndereco() {
+		if (enderecoPonto.getText().equals("")) {
+			return null;
+		}
+		return enderecoPonto.getText().trim();
+	}
+	
+	/**
+	 * @return the descricaoPonto
+	 */
+	private String getDescricao() {
+		if (descricaoPontoTuristico.getText().equals("")) {
+			return null;
+		}
+		return descricaoPontoTuristico.getText().trim();
 	}
 }

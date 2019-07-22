@@ -1,39 +1,48 @@
 package janelas;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import java.awt.Window.Type;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-
-import java.awt.event.ActionListener;
-import java.sql.Connection;
+import java.awt.Window.Type;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import com.toedter.calendar.JDateChooser;
+
+import entidades.Museu;
+import interacaoBanco.ExecutaQuery;
 
 public class CadastroMuseu {
 
 	private JDialog frmCadastroDeMuseu;
 	private JTextField enderecoMuseu;
 	private JTextField nomeMuseu;
-	private JTextField dataFundacao;
 	private JTextField numeroSalasMuseu;
 	private JTextField numeroFundadores;
+	JDateChooser dataFundacao;
+	JEditorPane descricaoMuseu;
 	private Connection conection;
 	private JButton btnCadastrar = new JButton("Cadastrar");
 	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
-	 * Launch the application.
+	 * Launch the window.
 	 */
 	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
@@ -67,11 +76,10 @@ public class CadastroMuseu {
 		frmCadastroDeMuseu.setBounds(100, 100, 260, 670);
 		frmCadastroDeMuseu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		JEditorPane descricaoMuseu = new JEditorPane();
+		descricaoMuseu = new JEditorPane();
 		descricaoMuseu.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -87,7 +95,6 @@ public class CadastroMuseu {
 		enderecoMuseu.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -104,7 +111,6 @@ public class CadastroMuseu {
 		nomeMuseu.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -120,21 +126,6 @@ public class CadastroMuseu {
 		JLabel lblDataDeFundao = new JLabel("Data de funda\u00E7\u00E3o: *");
 		lblDataDeFundao.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		dataFundacao = new JTextField();
-		dataFundacao.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
-				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
-					btnCancelar.doClick();
-				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
-					btnCadastrar.doClick();
-				}
-			}
-		});
-		lblDataDeFundao.setLabelFor(dataFundacao);
-		dataFundacao.setColumns(10);
-		
 		JLabel lblNmeroDeSalas = new JLabel("N\u00FAmero de Salas: *");
 		lblNmeroDeSalas.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
@@ -142,7 +133,6 @@ public class CadastroMuseu {
 		numeroSalasMuseu.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -160,7 +150,6 @@ public class CadastroMuseu {
 		numeroFundadores.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				System.out.println(arg0.getKeyChar());
 				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
 					btnCancelar.doClick();
 				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
@@ -169,8 +158,55 @@ public class CadastroMuseu {
 			}
 		});
 		numeroFundadores.setColumns(10);
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Museu museu= new Museu();
+				museu.setNome(getNomeMuseu());
+				museu.setEndereco(getEndereco());
+				museu.setDescricao(getDescricao());
+				museu.setDataFund(getDataFundacao());
+				museu.setNumeroFundadores(getNumeroFundadores());
+				museu.setNumeroSalas(getNumerosSalas());
+				if (!ExecutaQuery.cadastra(museu.pontoParaCadastro(), conection)) {
+					Mesnsagens.mensagemErroCadastrar();
+				} else {
+					try {
+						museu.setCod(buscaCodigoPonto(getNomeMuseu(), getEndereco()));
+						if (!ExecutaQuery.cadastra(museu.museuParaCadastro(), conection)) {
+							Mesnsagens.mensagemErroCadastrar();
+						} else {
+							Mesnsagens.mensegemSucessoCadastro();
+							frmCadastroDeMuseu.dispose();
+						}
+					} catch (SQLException e) {
+						Mesnsagens.mensagemErroCadastrar();
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnCadastrar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		
 		btnCadastrar.setToolTipText("Cadastra o quarto se n\u00E3o eceder o numero de quartos j\u00E1 cadastrados no hotel em espec\u00EDfico.");
+		btnCancelar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (e.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
 		
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -178,29 +214,31 @@ public class CadastroMuseu {
 			}
 		});
 		btnCancelar.setToolTipText("Cancela o cadastro de um quarto.");
+		
+		dataFundacao = new JDateChooser();
 		GroupLayout groupLayout = new GroupLayout(frmCadastroDeMuseu.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 							.addComponent(labelNome, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
 							.addComponent(nomeMuseu, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
 							.addComponent(labelEndereco, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
 							.addComponent(enderecoMuseu, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
 							.addComponent(lblDataDeFundao)
-							.addComponent(dataFundacao)
 							.addComponent(lblNmeroDeSalas)
 							.addComponent(numeroSalasMuseu)
 							.addComponent(lblNumeroDeFundadores)
-							.addComponent(numeroFundadores))
+							.addComponent(numeroFundadores)
+							.addComponent(dataFundacao, GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
 						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
 							.addComponent(labelDescricao, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
 							.addComponent(descricaoMuseu, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(btnCadastrar, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 225, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
 							.addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
@@ -231,7 +269,7 @@ public class CadastroMuseu {
 					.addComponent(labelDescricao, GroupLayout.PREFERRED_SIZE, 16, GroupLayout.PREFERRED_SIZE)
 					.addGap(6)
 					.addComponent(descricaoMuseu, GroupLayout.PREFERRED_SIZE, 281, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnCadastrar)
 						.addComponent(btnCancelar))
@@ -239,5 +277,83 @@ public class CadastroMuseu {
 		);
 		frmCadastroDeMuseu.getContentPane().setLayout(groupLayout);
 	}
+	
+	private int buscaCodigoPonto(String nome, String endereco) throws SQLException {
+		StringBuilder esprecao = new StringBuilder();
+		esprecao.append("SELECT codpont From pontosturisticos where nome=")
+				.append('\'')
+				.append(nome)
+				.append('\'')
+				.append(" and endereco=")
+				.append('\'')
+				.append(endereco)
+				.append('\'');
+		ResultSet rs = ExecutaQuery.busca(esprecao, conection);
+		int result;
+		rs.next();
+		result=rs.getInt("codpont");
+		rs.close();
+		return result;
+	}
 
+	/**
+	 * @return the nomeMuseu
+	 */
+	private String getNomeMuseu() {
+		if (nomeMuseu.getText().equals("")) {
+			return null;
+		}
+		return nomeMuseu.getText().trim();
+	}
+
+	/**
+	 * @return the numeroSalas
+	 */
+	private Integer getNumerosSalas() {
+		if (numeroSalasMuseu.getText().equals("")) {
+			return null;
+		}
+		return Integer.parseInt(numeroSalasMuseu.getText().trim());
+	}
+
+	/**
+	 * @return the numeroFundadores
+	 */
+	private Integer getNumeroFundadores() {
+		if (numeroFundadores.getText().equals("")) {
+			return null;
+		}
+		return Integer.parseInt(numeroFundadores.getText().trim());
+	}
+
+	/**
+	 * @return the enderecoMuseu
+	 */
+	private String getEndereco() {
+		if (enderecoMuseu.getText().equals("")) {
+			return null;
+		}
+		return enderecoMuseu.getText().trim();
+	}
+
+	/**
+	 * @return the descricao
+	 */
+	private String getDescricao() {
+		if (descricaoMuseu.getText().equals("")) {
+			return null;
+		}
+		return descricaoMuseu.getText().trim();
+	}
+
+	/**
+	 * @return the dataFundacao
+	 */
+	private String getDataFundacao() {
+		if (dataFundacao.getDate()==null){
+			return null;
+		}
+		DateFormat df = new SimpleDateFormat(dataFundacao.getDateFormatString());
+		return df.format(dataFundacao.getDate());
+	}
 }

@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
@@ -34,7 +33,7 @@ public class CadastroCidade {
 	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
-	 * Launch the application.
+	 * Launch the window.
 	 */
 	public static void Abrir(Connection conection,JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
@@ -163,9 +162,9 @@ public class CadastroCidade {
 				cidade.setEstado(getEstado());
 				cidade.setPopulacao(getPopulacao());
 				if (!ExecutaQuery.cadastra(cidade.cidadeParaCadastro(), conection)) {
-					mensagemErroCadastrar();
+					Mesnsagens.mensagemErroCadastrar();
 				} else {
-					mensegemSucessoCadastro();
+					Mesnsagens.mensegemSucessoCadastro();
 					frmCadatroDeCidade.dispose();
 				}
 			}
@@ -229,6 +228,7 @@ public class CadastroCidade {
 		);
 		frmCadatroDeCidade.getContentPane().setLayout(groupLayout);
 	}
+	
 	/**
 	 * @return the nomeCidade
 	 */
@@ -258,15 +258,4 @@ public class CadastroCidade {
 		}
 		return estadoCidade.getText().trim();
 	}
-
-	/**
-	 * Mostra mensagem solicitando que seja revisado os dados inseridos
-	 */
-	private void mensagemErroCadastrar() {
-		JOptionPane.showMessageDialog(null, "Erro ao inserir o Cliente. Revise os dados inseridos.", "Alerta", 0);
-	}
-	private void mensegemSucessoCadastro() {
-		JOptionPane.showMessageDialog(null, "Sucesso ao cadastrar a Casa de Show.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-	}
-
 }

@@ -11,7 +11,7 @@ public class Quarto {
 	//quartos(#&codhot, #codquart, tipoquart, valor);
 	private int codhot;
 	private int cod;
-	private int tipoQuarto;
+	private String tipoQuarto;
 	private double valor;
 	/**
 	 * @return the codhot
@@ -40,13 +40,13 @@ public class Quarto {
 	/**
 	 * @return the tipoQuarto
 	 */
-	public int getTipoQuarto() {
+	public String getTipoQuarto() {
 		return tipoQuarto;
 	}
 	/**
 	 * @param tipoQuarto the tipoQuarto to set
 	 */
-	public void setTipoQuarto(int tipoQuarto) {
+	public void setTipoQuarto(String tipoQuarto) {
 		this.tipoQuarto = tipoQuarto;
 	}
 	/**
@@ -70,10 +70,12 @@ public class Quarto {
 		if (!isNull(codhot)) {
 			result.append(codhot)
 				.append(',');
-			if (isNull(tipoQuarto)) {
-				result.append(tipoQuarto)
+			if (!isNull(tipoQuarto)) {
+				result.append('\'')
+					.append(tipoQuarto)
+					.append('\'')
 					.append(',');
-				if (isNull(valor)) {
+				if (!isNull(valor)) {
 					result.append(valor)
 						.append(");");
 					return result;

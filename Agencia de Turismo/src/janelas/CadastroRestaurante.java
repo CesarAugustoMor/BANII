@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Window.Type;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 
 import javax.swing.ButtonGroup;
@@ -14,15 +16,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import entidades.Restaurante;
 import interacaoBanco.ExecutaQuery;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class CadastroRestaurante {
 
@@ -35,8 +34,7 @@ public class CadastroRestaurante {
 	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
-	 * Launch the application.
-	 * @return 0 ao terminar a execução
+	 * Launch the window.
 	 */
 	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
@@ -196,7 +194,6 @@ public class CadastroRestaurante {
 				Restaurante rest = new Restaurante();
 				rest.setEndereco(getEndereco());
 				rest.setNome(getNomeRetaurante());
-				System.out.println(rest.getNome());
 				if (cincoEstrelas.isSelected()) {
 					rest.setCategoria(5);
 				} else if (duasEstrelas.isSelected()) {
@@ -208,11 +205,10 @@ public class CadastroRestaurante {
 				} else {
 					rest.setCategoria(1);
 				}
-				System.out.println(rest.restauranteParaCadastro());
 				if (!ExecutaQuery.cadastra(rest.restauranteParaCadastro(), conection)) {
-					mensagemErroCadastrar();
+					Mesnsagens.mensagemErroCadastrar();
 				} else {
-					mensegemSucessoCadastro();
+					Mesnsagens.mensegemSucessoCadastro();
 					frmCadastroDeRestaurante.dispose();
 				}
 			}
@@ -289,14 +285,5 @@ public class CadastroRestaurante {
 	 */
 	private String getEndereco() {
 		return enderecoRestaurante.getText();
-	}
-	/**
-	 * Mostra mensagem solicitando que seja revisado os dados inseridos
-	 */
-	private void mensagemErroCadastrar() {
-		JOptionPane.showMessageDialog(null, "Erro ao inserir o Restaurante. Revise os dados inseridos.", "Alerta", 0);
-	}
-	private void mensegemSucessoCadastro() {
-		JOptionPane.showMessageDialog(null, "Sucesso ao cadastrar a Casa de Show.", "Sucesso", 1);
 	}
 }

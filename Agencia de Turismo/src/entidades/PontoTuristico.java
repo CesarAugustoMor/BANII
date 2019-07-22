@@ -14,14 +14,6 @@ public class PontoTuristico {
 	private String descricao;
 	private String endereco;
 
-	public PontoTuristico(Integer codpot, String nome, String descricao, String endereco) {
-
-		this.cod = codpot;
-		this.nome = nome;
-		this.descricao = descricao;
-		this.endereco = endereco;
-	}
-
 	/**
 	 * @return the cod
 	 */

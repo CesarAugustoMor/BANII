@@ -11,12 +11,12 @@ import java.util.Locale;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
@@ -74,7 +74,7 @@ public class JanelaPrincipal {
 		CadastroCicadades.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroCidade.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -85,7 +85,7 @@ public class JanelaPrincipal {
 		CadastroClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				} else
 					CadastroCliente.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -99,7 +99,7 @@ public class JanelaPrincipal {
 		CadastroNovoHotel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroHotel.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -110,7 +110,7 @@ public class JanelaPrincipal {
 		CadastroQuartosHotel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroQuartos.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -121,7 +121,7 @@ public class JanelaPrincipal {
 		CadastroRestaurantes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroRestaurante.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -139,7 +139,7 @@ public class JanelaPrincipal {
 		CadastroCasasDeShow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroCasaShow.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -150,7 +150,7 @@ public class JanelaPrincipal {
 		CadastroIgrejas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroIgreja.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -164,7 +164,7 @@ public class JanelaPrincipal {
 		CadastroNovoMuseu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroMuseu.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -175,7 +175,7 @@ public class JanelaPrincipal {
 		CadastroFundadore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroFundador.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -186,7 +186,7 @@ public class JanelaPrincipal {
 		mntmOutros.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (conectionIsNull()) {
-					mensagemConectarBanco();
+					Mesnsagens.mensagemConectarBanco();
 				}else
 				CadastroPontoTuristico.Abrir(conection, frmAgenciaDeTurismo);
 			}
@@ -287,25 +287,25 @@ public class JanelaPrincipal {
 		senhaServidor.setText("1234");
 		lblSenhaDoUsuario.setLabelFor(senhaServidor);
 		
-		/**/
+		/*
 		try {
 			conection=ConectaBanco.getConection(getEnderecoServidor(), getPotaServidor(), getSenhaServidor());
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		/**/
-		/*JButton btnConectar = new JButton("Conectar");
+		*/
+		JButton btnConectar = new JButton("Conectar");
 		btnConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					conection=ConectaBanco.getConection(getEnderecoServidor(), getPotaServidor(), getSenhaServidor());
-					JOptionPane.showMessageDialog(null, "Conecção realizada com sucesso.", "Informação", 1);
+					Mesnsagens.mensagemConeccaoRealizada();
 				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(null, "Não é possivel conectar ao banco de dados. Verifique as informações.", "Alerta", 0);
+					Mesnsagens.mensagemConeccaoFracassada();
 					e.printStackTrace();
 				}
 			}
-		});*/
+		});
 		GroupLayout groupLayout = new GroupLayout(frmAgenciaDeTurismo.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -320,8 +320,8 @@ public class JanelaPrincipal {
 								.addComponent(senhaServidor, Alignment.LEADING)
 								.addComponent(portaServidor, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)))
 						.addComponent(lblSenhaDoUsuario)
-						//.addComponent(btnConectar))
-					).addContainerGap(120, Short.MAX_VALUE))
+						.addComponent(btnConectar))
+					.addContainerGap(120, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -339,7 +339,7 @@ public class JanelaPrincipal {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(senhaServidor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					//.addComponent(btnConectar)
+					.addComponent(btnConectar)
 					.addContainerGap(287, Short.MAX_VALUE))
 		);
 		frmAgenciaDeTurismo.getContentPane().setLayout(groupLayout);
@@ -366,16 +366,9 @@ public class JanelaPrincipal {
 		return senhaServidor.getText();
 	}
 	/**
-	 * @return true se não foi realiado concção com sucesso
+	 * @return true se não foi realiado coneção com sucesso
 	 */
 	private boolean conectionIsNull() {
 		return conection==null;
-	}
-
-	/**
-	 * Mostra mensagem  solicitando que seja realizado a conecção com o banco
-	 */
-	private void mensagemConectarBanco() {
-		JOptionPane.showMessageDialog(null, "Favor realize primeiro a conecção com o servidor.", "Alerta", 0);
 	}
 }

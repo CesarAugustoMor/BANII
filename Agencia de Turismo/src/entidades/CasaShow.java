@@ -84,7 +84,8 @@ public class CasaShow {
 	 * @return the horaInicio
 	 */
 	public String getHoraInicioToString() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm");
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_TIME;
+		System.out.println(horaInicio.format(formatter));
 		return horaInicio.format(formatter);
 	}
 	/**
@@ -97,8 +98,9 @@ public class CasaShow {
 	 * @param horaInicio the horaInicio to set
 	 */
 	public void setHoraInicio(String horaInicio) {
-		DateTimeFormatter formatter=DateTimeFormatter.ISO_LOCAL_TIME;
+		DateTimeFormatter formatter=DateTimeFormatter.ISO_TIME;
 		this.horaInicio = LocalTime.parse(horaInicio,formatter);
+		System.out.println(this.horaInicio);
 	}
 	/**
 	 * @return the diaFechado

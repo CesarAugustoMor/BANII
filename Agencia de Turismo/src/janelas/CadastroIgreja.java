@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -18,9 +20,10 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
+import com.toedter.calendar.JDateChooser;
 
 import entidades.Igreja;
 import interacaoBanco.ExecutaQuery;
@@ -29,8 +32,8 @@ public class CadastroIgreja {
 
 	private JDialog frmCadastroDeIgreja;
 	private JTextField enderecoPontoIgreja;
+	JDateChooser dataConstrucao;
 	private JTextField nomePontoIgreja;
-	private JTextField dataConstrucao;
 	private JTextField estiloConstrucao;
 	private Connection conection;
 	private JButton btnCadastrar = new JButton("Cadastrar");
@@ -38,7 +41,7 @@ public class CadastroIgreja {
 	JEditorPane descricaoPontoIgreja = new JEditorPane();
 
 	/**
-	 * Launch the application.
+	 * Launch the window.
 	 */
 	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
@@ -136,18 +139,18 @@ public class CadastroIgreja {
 				cidade.setEstiloConstrucao(getEstiloConstrucao());
 				cidade.setDescricao(getDescricao());
 					if (!ExecutaQuery.cadastra(cidade.pontoParaCadastro(), conection)) {
-						mensagemErroCadastrar();
+						Mesnsagens.mensagemErroCadastrar();
 					} else {
 						try {
 							cidade.setCod(buscaCodigoPonto(getNomeIgreja(), getEdereco()));
 							if (!ExecutaQuery.cadastra(cidade.igrejaParaCadastro(), conection)) {
-								mensagemErroCadastrar();
+								Mesnsagens.mensagemErroCadastrar();
 							} else {
-								mensegemSucessoCadastro();
+								Mesnsagens.mensegemSucessoCadastro();
 								frmCadastroDeIgreja.dispose();
 							}
 						} catch (SQLException e) {
-							mensagemErroCadastrar();
+							Mesnsagens.mensagemErroCadastrar();
 							e.printStackTrace();
 						}
 				}
@@ -186,20 +189,6 @@ public class CadastroIgreja {
 		JLabel lblData = new JLabel("Data constru\u00E7\u00E3o (inaugura\u00E7\u00E3o): *");
 		lblData.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		dataConstrucao = new JTextField();
-		dataConstrucao.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
-					btnCancelar.doClick();
-				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
-					btnCadastrar.doClick();
-				}
-			}
-		});
-		lblData.setLabelFor(dataConstrucao);
-		dataConstrucao.setColumns(10);
-		
 		JLabel lblEstiloDeContruo = new JLabel("Estilo de contru\u00E7\u00E3o: *");
 		lblEstiloDeContruo.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
@@ -215,6 +204,9 @@ public class CadastroIgreja {
 			}
 		});
 		estiloConstrucao.setColumns(10);
+		
+		dataConstrucao = new JDateChooser();
+		lblData.setLabelFor(dataConstrucao);
 		GroupLayout groupLayout = new GroupLayout(frmCadastroDeIgreja.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -224,17 +216,17 @@ public class CadastroIgreja {
 						.addComponent(descricaoPontoIgreja, GroupLayout.PREFERRED_SIZE, 223, GroupLayout.PREFERRED_SIZE)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(btnCadastrar, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
 							.addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE))
 						.addComponent(lblEstiloDeContruo)
-						.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+						.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 							.addComponent(estiloConstrucao, Alignment.LEADING)
-							.addComponent(dataConstrucao, Alignment.LEADING)
 							.addComponent(lblData, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addComponent(labelNome, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
 							.addComponent(nomePontoIgreja, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
 							.addComponent(labelEndereco, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-							.addComponent(enderecoPontoIgreja, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))
+							.addComponent(enderecoPontoIgreja, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+							.addComponent(dataConstrucao, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
 						.addComponent(labelDescricaoPontoIgreja, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
@@ -312,10 +304,11 @@ public class CadastroIgreja {
 	 * @return the dataConstrucao
 	 */
 	private String getDataConstrucao() {
-		if (dataConstrucao.getText().equals("")) {
+		if (isNull(dataConstrucao.getDate())) {
 			return null;
 		}
-		return dataConstrucao.getText().trim();
+		DateFormat df = new SimpleDateFormat(dataConstrucao.getDateFormatString());
+		return df.format(dataConstrucao.getDate());
 	}
 
 	/**
@@ -339,12 +332,9 @@ public class CadastroIgreja {
 	}
 
 	/**
-	 * Mostra mensagem solicitando que seja revisado os dados inseridos
+	 * @return true se o objeto em questão é null
 	 */
-	private void mensagemErroCadastrar() {
-		JOptionPane.showMessageDialog(null, "Erro ao inserir o Cliente. Revise os dados inseridos.", "Alerta", 0);
-	}
-	private void mensegemSucessoCadastro() {
-		JOptionPane.showMessageDialog(null, "Sucesso ao cadastrar a Casa de Show.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+	private boolean isNull(Object valor) {
+		return valor==null;
 	}
 }

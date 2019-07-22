@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Window.Type;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 
 import javax.swing.ButtonGroup;
@@ -14,14 +16,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import entidades.Cliente;
 import interacaoBanco.ExecutaQuery;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class CadastroCliente {
 
@@ -150,9 +149,9 @@ public class CadastroCliente {
 				cliente.setTelefone(getTelefoneCliente());
 				cliente.setEmail(getEmailCliente());
 				if (!ExecutaQuery.cadastra(cliente.clienteParaCadastro(), conection)) {
-					mensagemErroCadastrar();
+					Mesnsagens.mensagemErroCadastrar();
 				} else {
-					mensegemSucessoCadastro();
+					Mesnsagens.mensegemSucessoCadastro();
 					frmCadastroCliente.dispose();
 				}
 			}
@@ -246,15 +245,5 @@ public class CadastroCliente {
 			return null;
 		}
 		return emailCliente.getText().trim();
-	}
-
-	/**
-	 * Mostra mensagem solicitando que seja revisado os dados inseridos
-	 */
-	private void mensagemErroCadastrar() {
-		JOptionPane.showMessageDialog(null, "Erro ao inserir o Cliente. Revise os dados inseridos.", "Alerta", 0);
-	}
-	private void mensegemSucessoCadastro() {
-		JOptionPane.showMessageDialog(null, "Sucesso ao cadastrar a Casa de Show.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 	}
 }

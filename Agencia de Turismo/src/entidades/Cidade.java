@@ -86,9 +86,8 @@ public class Cidade {
 					.append('\'')
 					.append(',');
 				if (!isNull(populacao)) {
-					result.append('\'')
-						.append(populacao)
-						.append("\');");
+					result.append(populacao)
+						.append(");");
 					return result;
 				} else {
 					return null;

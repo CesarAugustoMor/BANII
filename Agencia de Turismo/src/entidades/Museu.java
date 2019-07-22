@@ -86,6 +86,15 @@ public class Museu {
 		this.dataFund = dataFund;
 	}
 	/**
+	 * @param dataFundacao
+	 */
+	public void setDataFund(String dataFundacao) {
+		DateTimeFormatter formatter=DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		if (dataFundacao!=null) {
+			this.dataFund = LocalDate.parse(dataFundacao, formatter);
+		}
+	}
+	/**
 	 * @return the numeroSalas
 	 */
 	public Integer getNumeroSalas() {
@@ -148,7 +157,9 @@ public class Museu {
 			result.append(cod)
 				.append(',');
 			if (!isNull(dataFund)) {
-				result.append(dataFund)
+				result.append('\'')
+					.append(dataFund)
+					.append('\'')
 					.append(',');
 				if (!isNull(numeroSalas)) {
 					result.append(numeroSalas)

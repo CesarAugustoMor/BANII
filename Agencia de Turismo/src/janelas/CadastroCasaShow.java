@@ -1,5 +1,6 @@
 package janelas;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Window.Type;
@@ -11,6 +12,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.DefaultComboBoxModel;
@@ -22,32 +24,31 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import entidades.CasaShow;
 import interacaoBanco.ExecutaQuery;
-import java.awt.Dimension;
+import lu.tudor.santec.jtimechooser.JTimeChooser;
 
 public class CadastroCasaShow {
 
 	private JDialog frmCadastroDeCasas;
 	private JTextField enderecoCasaShow;
 	private JTextField nomeCasaShow;
-	private JTextField horarioInicio;
-	private JTextField diaFechamentoCasa;
 	private JTextField precoMedioPratos;
 	private JTextField especialidadeRestaurante;
+	private JTimeChooser horaInicio;
 	private Connection conection;
 	private DefaultComboBoxModel<String> list;
+	private JComboBox<String> diaFechamento;
 	private JComboBox<String> listaRestaurantes;
 	private HashMap<String , Integer> listaRest = new HashMap<String,Integer>();
 	private JButton btnCancelar = new JButton("Cancelar");
 	private	JButton btnCadastrar = new JButton("Cadastrar");
 
 	/**
-	 * Launch the application.
+	 * Launch the window.
 	 */
 	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
@@ -98,7 +99,7 @@ public class CadastroCasaShow {
 		frmCadastroDeCasas.setResizable(false);
 		frmCadastroDeCasas.setType(Type.UTILITY);
 		frmCadastroDeCasas.setTitle("Cadastro de Casas de Shows");
-		frmCadastroDeCasas.setBounds(100, 100, 256, 800);
+		frmCadastroDeCasas.setBounds(100, 100, 256, 820);
 		frmCadastroDeCasas.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JEditorPane descricaoCasaShow = new JEditorPane();
@@ -167,39 +168,13 @@ public class CadastroCasaShow {
 		lblHorarioDeInicio.setToolTipText("Horario de Inicio de atendimento da Casa de Show, no formato hh:mm. *Campo de quesito obrigat\u00F3rio.");
 		lblHorarioDeInicio.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		horarioInicio = new JTextField();
-		horarioInicio.setToolTipText("Horario de Inicio de atendimento da Casa de Show, no formato hh:mm. *Campo de quesito obrigat\u00F3rio.");
-		horarioInicio.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
-					btnCancelar.doClick();
-				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
-					btnCadastrar.doClick();
-				}
-			}
-		});
-		lblHorarioDeInicio.setLabelFor(horarioInicio);
-		horarioInicio.setColumns(10);
+		horaInicio = new JTimeChooser(new Date());
+		horaInicio.setShowIcon(true);
+		horaInicio.setShowSeconds(false);
 		
 		JLabel lblDiaDeFechamento = new JLabel("Dia de Fechamento: *");
 		lblDiaDeFechamento.setToolTipText("Dia da semana em que a casa de Show n\u00E3o trabalha. *Campo de quesito obrigat\u00F3rio.");
 		lblDiaDeFechamento.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		diaFechamentoCasa = new JTextField();
-		diaFechamentoCasa.setToolTipText("Dia da semana em que a casa de Show n\u00E3o trabalha. *Campo de quesito obrigat\u00F3rio.");
-		diaFechamentoCasa.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
-					btnCancelar.doClick();
-				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
-					btnCadastrar.doClick();
-				}
-			}
-		});
-		lblDiaDeFechamento.setLabelFor(diaFechamentoCasa);
-		diaFechamentoCasa.setColumns(10);
 		
 		JLabel lblRestaurante = new JLabel("Restaurante:");
 		lblRestaurante.setToolTipText("Lista de restaurantes cadastrados no banco de dados.");
@@ -239,18 +214,18 @@ public class CadastroCasaShow {
 					casa.setPrecoMedio(getprecoMedioPrato());
 					casa.setCodRest(listaRest.get(itemSelect));
 					if (!ExecutaQuery.cadastra(casa.pontoParaCadastro(), conection)) {
-						mensagemErroCadastrar();
+						Mesnsagens.mensagemErroCadastrar();
 					} else {
 						try {
 							casa.setCod(buscaCodigoPonto(getNomeCasa(), getEndereco()));
 							if (!ExecutaQuery.cadastra(casa.casaShowParaCadastro(), conection)) {
-								mensagemErroCadastrar();
+								Mesnsagens.mensagemErroCadastrar();
 							} else {
-								mensegemSucessoCadastro();
+								Mesnsagens.mensegemSucessoCadastro();
 								frmCadastroDeCasas.dispose();
 							}
 						} catch (SQLException e) {
-							mensagemErroCadastrar();
+							Mesnsagens.mensagemErroCadastrar();
 							e.printStackTrace();
 						}
 					}
@@ -265,18 +240,18 @@ public class CadastroCasaShow {
 					casa.setPrecoMedio(getprecoMedioPrato());
 					//casa.setCodRest(codrest.get(indexSelect));
 					if (!ExecutaQuery.cadastra(casa.pontoParaCadastro(), conection)) {
-						mensagemErroCadastrar();
+						Mesnsagens.mensagemErroCadastrar();
 					} else {
 						try {
 							casa.setCod(buscaCodigoPonto(getNomeCasa(), getEndereco()));
 							if (!ExecutaQuery.cadastra(casa.casaShowParaCadastro(), conection)) {
-								mensagemErroCadastrar();
+								Mesnsagens.mensagemErroCadastrar();
 							} else {
-								mensegemSucessoCadastro();
+								Mesnsagens.mensegemSucessoCadastro();
 								frmCadastroDeCasas.dispose();
 							}
 						} catch (SQLException e) {
-							mensagemErroCadastrar();
+							Mesnsagens.mensagemErroCadastrar();
 							e.printStackTrace();
 						}
 					}
@@ -341,10 +316,8 @@ public class CadastroCasaShow {
 					if (!isNull(novoRest)) {
 						list.addElement(novoRest);
 						listaRestaurantes.setSelectedIndex(list.getSize()-1);
-					}else
-						System.out.println("a busca não retornou resultados");
+					}
 				} catch (SQLException ex) {
-					System.out.println("depois de tenatr adicionar novo Rest e falhar na busca do novo restaurante.");
 					ex.printStackTrace();
 				}
 			}
@@ -355,7 +328,7 @@ public class CadastroCasaShow {
 		btnNovo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CadastroRestaurante.Abrir(conection, frPrincipal);
-				mensagemRealizarCadastro();
+				Mesnsagens.mensagemRealizarCadastro();
 			}
 		});
 		btnNovo.addKeyListener(new KeyAdapter() {
@@ -369,6 +342,10 @@ public class CadastroCasaShow {
 			}
 		});
 		btnNovo.setPreferredSize(new Dimension(75, 23));
+		
+		diaFechamento = new JComboBox<String>();
+		diaFechamento.setModel(new DefaultComboBoxModel<String>(new String[] {"Segunda-feira", "Ter\u00E7a-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "S\u00E1bado", "Domingo", "N\u00E3o Fechamos"}));
+		diaFechamento.setSelectedIndex(0);
 		GroupLayout groupLayout = new GroupLayout(frmCadastroDeCasas.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -379,46 +356,51 @@ public class CadastroCasaShow {
 						.addComponent(nomeCasaShow, GroupLayout.PREFERRED_SIZE, 223, GroupLayout.PREFERRED_SIZE)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(btnCadastrar, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
 							.addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)
 							.addContainerGap())
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(lblHorarioDeInicio)
-							.addContainerGap(134, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblDiaDeFechamento)
-							.addContainerGap(117, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblRestaurante)
-							.addContainerGap(170, Short.MAX_VALUE))
+							.addContainerGap(130, Short.MAX_VALUE))
 						.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
 							.addComponent(labelEndereco, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
 							.addGroup(groupLayout.createSequentialGroup()
-								.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-									.addComponent(listaRestaurantes, Alignment.LEADING, 0, 222, Short.MAX_VALUE)
-									.addComponent(diaFechamentoCasa, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-									.addComponent(horarioInicio, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-									.addComponent(enderecoCasaShow, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-									.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-										.addComponent(btnNovo, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(btnAtualizarListaRest, GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)))
+								.addComponent(enderecoCasaShow, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
 								.addContainerGap()))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(horaInicio, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+							.addGap(18))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblPreoMdioDos)
-									.addPreferredGap(ComponentPlacement.RELATED, 83, GroupLayout.PREFERRED_SIZE))
+									.addComponent(lblDiaDeFechamento)
+									.addPreferredGap(ComponentPlacement.RELATED, 95, GroupLayout.PREFERRED_SIZE))
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+									.addComponent(listaRestaurantes, 0, 222, Short.MAX_VALUE)
+									.addGroup(groupLayout.createSequentialGroup()
+										.addComponent(btnNovo, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(btnAtualizarListaRest, GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+									.addComponent(diaFechamento, 0, 222, Short.MAX_VALUE))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblEspecialidadeDoRestaurante)
-									.addPreferredGap(ComponentPlacement.RELATED, 53, GroupLayout.PREFERRED_SIZE))
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+										.addGroup(groupLayout.createSequentialGroup()
+											.addComponent(lblPreoMdioDos)
+											.addPreferredGap(ComponentPlacement.RELATED, 79, GroupLayout.PREFERRED_SIZE))
+										.addGroup(groupLayout.createSequentialGroup()
+											.addComponent(lblEspecialidadeDoRestaurante)
+											.addPreferredGap(ComponentPlacement.RELATED, 49, GroupLayout.PREFERRED_SIZE))
+										.addGroup(groupLayout.createSequentialGroup()
+											.addComponent(labelDescricaoCasa, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(ComponentPlacement.RELATED, 147, GroupLayout.PREFERRED_SIZE))
+										.addComponent(descricaoCasaShow, GroupLayout.PREFERRED_SIZE, 222, GroupLayout.PREFERRED_SIZE)
+										.addComponent(precoMedioPratos, GroupLayout.PREFERRED_SIZE, 222, GroupLayout.PREFERRED_SIZE)
+										.addComponent(especialidadeRestaurante, GroupLayout.PREFERRED_SIZE, 222, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(labelDescricaoCasa, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, 151, GroupLayout.PREFERRED_SIZE))
-								.addComponent(descricaoCasaShow, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-								.addComponent(precoMedioPratos, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-								.addComponent(especialidadeRestaurante, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))
-							.addGap(21))))
+									.addComponent(lblRestaurante)
+									.addPreferredGap(ComponentPlacement.RELATED, 148, GroupLayout.PREFERRED_SIZE)))
+							.addGap(18))))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -434,14 +416,14 @@ public class CadastroCasaShow {
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(lblHorarioDeInicio)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(horarioInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(horaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(lblDiaDeFechamento)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(diaFechamentoCasa, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(diaFechamento, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(lblRestaurante)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGap(9)
 					.addComponent(listaRestaurantes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
@@ -458,8 +440,8 @@ public class CadastroCasaShow {
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(labelDescricaoCasa, GroupLayout.PREFERRED_SIZE, 16, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(descricaoCasaShow, GroupLayout.PREFERRED_SIZE, 281, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 218, Short.MAX_VALUE)
+					.addComponent(descricaoCasaShow, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnCadastrar)
 						.addComponent(btnCancelar))
@@ -521,12 +503,6 @@ public class CadastroCasaShow {
 	}
 
 	/**
-	 * Mostra mensagem que seja selecionado o restaurante recem cadastrado
-	 */
-	private void mensagemRealizarCadastro() {
-		JOptionPane.showMessageDialog(null, "Favor repita o processo selecionando o novo restaurante cadastrado.", "Informação", 1);
-	}
-	/**
 	 * @return the nomeCasaShow
 	 */
 	private String getNomeCasa() {
@@ -539,19 +515,16 @@ public class CadastroCasaShow {
 	 * @return the horarioInicio
 	 */
 	private String getHoario() {
-		if (horarioInicio.getText().equals("")) {
+		if (horaInicio.getFormatedTime().equals("")) {
 			return null;
 		}
-		return horarioInicio.getText().trim();
+		return horaInicio.getFormatedTime().trim();
 	}
 	/**
 	 * @return the nomeCasaShow
 	 */
 	private String getDiaFechado() {
-		if (diaFechamentoCasa.getText().equals("")) {
-			return null;
-		}
-		return diaFechamentoCasa.getText().trim();
+		return (String) diaFechamento.getSelectedItem();
 	}
 	/**
 	 * @return the nomeCasaShow
@@ -589,15 +562,7 @@ public class CadastroCasaShow {
 		}
 		return Integer.parseInt(precoMedioPratos.getText().trim());
 	}
-	/**
-	 * Mostra mensagem solicitando que seja revisado os dados inseridos
-	 */
-	private void mensagemErroCadastrar() {
-		JOptionPane.showMessageDialog(null, "Erro ao cadastrar a Casa de Show. Revise os dados inseridos.", "Erro", 0);
-	}
-	private void mensegemSucessoCadastro() {
-		JOptionPane.showMessageDialog(null, "Sucesso ao cadastrar a Casa de Show.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-	}
+
 	/**
 	 * @return true se o objeto em questão é null
 	 */

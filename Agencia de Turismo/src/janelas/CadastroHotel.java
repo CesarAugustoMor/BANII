@@ -47,7 +47,7 @@ public class CadastroHotel {
 	private JButton btnCancelar = new JButton("Cancelar");
 
 	/**
-	 * Launch the application.
+	 * Launch the window.
 	 */
 	public static void Abrir(Connection conection, JFrame frPrincipal) {
 		EventQueue.invokeLater(new Runnable() {
@@ -78,7 +78,7 @@ public class CadastroHotel {
 		frmCadastroHotel.setType(Type.UTILITY);
 		frmCadastroHotel.setResizable(false);
 		frmCadastroHotel.setTitle("Cadastro de Hotel");
-		frmCadastroHotel.setBounds(100, 100, 260, 480);
+		frmCadastroHotel.setBounds(100, 100, 270, 490);
 		frmCadastroHotel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JLabel lblNome = new JLabel("Nome: *");
@@ -225,8 +225,11 @@ public class CadastroHotel {
 		});
 		
 		JLabel lblRestaurante = new JLabel("Restaurante:");
+		lblRestaurante.setToolTipText("Lista de restaurantes cadastrados no banco de dados.");
 		lblRestaurante.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
+
+		listaRestaurantes = new JComboBox<String>();
+		listaRestaurantes.setToolTipText("Lista de restaurantes cadastrados no banco de dados.");
 		listaRestaurantes.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -321,71 +324,17 @@ public class CadastroHotel {
 						.addComponent(lblNome)
 						.addComponent(lblEndereo)
 						.addComponent(lblQuartosHotel)
-						.addComponent(nomeHotel, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(btnNovo, GroupLayout.PREFERRED_SIZE, 113, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnAtualizarListaRest, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
-						.addComponent(listaRestaurantes, 0, 234, Short.MAX_VALUE)
-						.addComponent(enderecoHotel, GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
-						.addComponent(nQuartosHotel, GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
+						.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+							.addComponent(nomeHotel, Alignment.LEADING)
+							.addComponent(enderecoHotel, Alignment.LEADING)
+							.addComponent(nQuartosHotel, Alignment.LEADING)
+							.addComponent(listaRestaurantes, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+								.addComponent(btnNovo, GroupLayout.PREFERRED_SIZE, 113, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(btnAtualizarListaRest, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))))
 					.addContainerGap())
 		);
-		btnCadastrar.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
-					btnCancelar.doClick();
-				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
-					btnCadastrar.doClick();
-				}
-			}
-		});
-		btnCadastrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String itemSelect = listaRestaurantes.getItemAt(listaRestaurantes.getSelectedIndex());
-				if(!isNull(itemSelect)) {
-					Hotel hotel = new Hotel();
-					hotel.setNome(getNomeHotel());
-					if (rdbtnCincoEstrelas.isSelected()) {
-						hotel.setCategoria(5);
-					} else if (rdbtnDuasEstrelas.isSelected()) {
-						hotel.setCategoria(2);
-					} else if (rdbtnTresEstrelas.isSelected()) {
-						hotel.setCategoria(3);
-					} else if (rdbtnQuatroEstrelas.isSelected()) {
-						hotel.setCategoria(4);
-					} else {
-						hotel.setCategoria(1);
-					}
-					hotel.setEndereco(getEndereco());
-					hotel.setNumeroquartos(getNQuartos());
-					hotel.setRest(listaRest.get(itemSelect));
-					if (!ExecutaQuery.cadastra(hotel.hotelParaCadastro(), conection)) {
-							mensagemErroCadastrar();
-						} else {
-							mensegemSucessoCadastro();
-							frmCadastroHotel.dispose();
-						}
-				}else {
-					Hotel hotel =new Hotel();
-					hotel.setNome(getNomeHotel());
-					if (rdbtnCincoEstrelas.isSelected()) {
-						hotel.setCategoria(5);
-					} else if (rdbtnDuasEstrelas.isSelected()) {
-						hotel.setCategoria(2);
-					} else if (rdbtnTresEstrelas.isSelected()) {
-						hotel.setCategoria(3);
-					} else if (rdbtnQuatroEstrelas.isSelected()) {
-						hotel.setCategoria(4);
-					} else {
-						hotel.setCategoria(1);
-					}
-					hotel.setEndereco(getEndereco());
-					hotel.setNumeroquartos(getNQuartos());
-				}
-			}
-		});
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
@@ -421,12 +370,73 @@ public class CadastroHotel {
 					.addComponent(rdbtnQuatroEstrelas)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(rdbtnCincoEstrelas)
-					.addPreferredGap(ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnCadastrar)
 						.addComponent(btnCancelar))
 					.addContainerGap())
 		);
+		btnCadastrar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				if (arg0.getKeyChar()==KeyEvent.VK_ESCAPE) {
+					btnCancelar.doClick();
+				} else if (arg0.getKeyChar()==KeyEvent.VK_ENTER) {
+					btnCadastrar.doClick();
+				}
+			}
+		});
+		btnCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String itemSelect = listaRestaurantes.getItemAt(listaRestaurantes.getSelectedIndex());
+				if(!isNull(itemSelect)) {
+					Hotel hotel = new Hotel();
+					hotel.setNome(getNomeHotel());
+					if (rdbtnCincoEstrelas.isSelected()) {
+						hotel.setCategoria(5);
+					} else if (rdbtnDuasEstrelas.isSelected()) {
+						hotel.setCategoria(2);
+					} else if (rdbtnTresEstrelas.isSelected()) {
+						hotel.setCategoria(3);
+					} else if (rdbtnQuatroEstrelas.isSelected()) {
+						hotel.setCategoria(4);
+					} else {
+						hotel.setCategoria(1);
+					}
+					hotel.setEndereco(getEndereco());
+					hotel.setNumeroquartos(getNQuartos());
+					hotel.setRest(listaRest.get(itemSelect));
+					if (!ExecutaQuery.cadastra(hotel.hotelParaCadastro(), conection)) {
+							Mesnsagens.mensagemErroCadastrar();
+						} else {
+							Mesnsagens.mensegemSucessoCadastro();
+							frmCadastroHotel.dispose();
+						}
+				}else {
+					Hotel hotel =new Hotel();
+					hotel.setNome(getNomeHotel());
+					if (rdbtnCincoEstrelas.isSelected()) {
+						hotel.setCategoria(5);
+					} else if (rdbtnDuasEstrelas.isSelected()) {
+						hotel.setCategoria(2);
+					} else if (rdbtnTresEstrelas.isSelected()) {
+						hotel.setCategoria(3);
+					} else if (rdbtnQuatroEstrelas.isSelected()) {
+						hotel.setCategoria(4);
+					} else {
+						hotel.setCategoria(1);
+					}
+					hotel.setEndereco(getEndereco());
+					hotel.setNumeroquartos(getNQuartos());
+					if (!ExecutaQuery.cadastra(hotel.hotelParaCadastro(), conection)) {
+						Mesnsagens.mensagemErroCadastrar();
+					} else {
+						Mesnsagens.mensegemSucessoCadastro();
+						frmCadastroHotel.dispose();
+					}
+				}
+			}
+		});
 		frmCadastroHotel.getContentPane().setLayout(groupLayout);
 	}
 	
@@ -503,16 +513,6 @@ public class CadastroHotel {
 			return null;
 		}
 		return enderecoHotel.getText().trim();
-	}
-
-	/**
-	 * Mostra mensagem solicitando que seja revisado os dados inseridos
-	 */
-	private void mensagemErroCadastrar() {
-		JOptionPane.showMessageDialog(null, "Erro ao inserir o Cliente. Revise os dados inseridos.", "Alerta", 0);
-	}
-	private void mensegemSucessoCadastro() {
-		JOptionPane.showMessageDialog(null, "Sucesso ao cadastrar a Casa de Show.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
